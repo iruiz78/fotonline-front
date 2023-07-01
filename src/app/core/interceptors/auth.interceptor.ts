@@ -6,20 +6,18 @@ import { AuthenticationService } from "../services/authentication.service";
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
 
-  constructor(private authService: AuthenticationService) { }
-  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    return next.handle(request);
-    // return this.authService.GetToken().pipe(mergeMap(token => {
-    //   request = request.clone({
-    //     setHeaders: {
-    //       Authorization: `Bearer ${token}`
-    //     }
-    //     });
-    //     return next.handle(request);
-    //   })
-    // );
-  }
+  constructor(private authenticationService: AuthenticationService) { }
 
+    intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+        const isLoggedIn = this.authenticationService.userValue;
+        if (isLoggedIn) {
+            request = request.clone({
+                setHeaders: { Authorization: `Bearer ${isLoggedIn.token}` }
+            });
+        }
+
+        return next.handle(request);
+    }
 }
 
 

@@ -1,14 +1,20 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import {
-  GoogleLoginProvider,
-  SocialAuthServiceConfig,
-  GoogleSigninButtonModule
-} from '@abacritt/angularx-social-login';
 import { CoreModule } from './core/core.module';
+import { HttpClientModule } from '@angular/common/http';
+
+import { OverlayModule } from 'primeng/overlay';
+import { ButtonModule } from 'primeng/button';
+import { CardModule } from 'primeng/card';
+import { CheckboxModule } from 'primeng/checkbox';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { AvatarModule } from 'primeng/avatar';
+import { BadgeModule } from 'primeng/badge';
+import { AuthModule } from './modules/auth.module';
+import { TableModule } from 'primeng/table';
 
 @NgModule({
   declarations: [
@@ -16,33 +22,29 @@ import { CoreModule } from './core/core.module';
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     AppRoutingModule,
     CoreModule,
-    GoogleSigninButtonModule
+    HttpClientModule,
+    AuthModule,
+
+    OverlayModule,
+    ButtonModule,
+    CardModule,
+    CheckboxModule,
+    OverlayPanelModule,
+    AvatarModule,
+    BadgeModule,
+    TableModule
+    // ServiceWorkerModule.register('ngsw-worker.js', {
+    //   enabled: !isDevMode(),
+    //   // Register the ServiceWorker as soon as the application is stable
+    //   // or after 30 seconds (whichever comes first).
+    //   registrationStrategy: 'registerWhenStable:30000'
+    // })
   ],
   providers: [
-    {
-      provide: 'SocialAuthServiceConfig',
-      useValue: {
-        autoLogin: false,
-        providers: [
-          {
-            id: GoogleLoginProvider.PROVIDER_ID,
-            provider: new GoogleLoginProvider('454277163633-sv72t74rmg2esuoheju60cvpvj0dq04m.apps.googleusercontent.com',
-            {
-              oneTapEnabled: false,
-            })
-          },
-          // {
-          //   id: FacebookLoginProvider.PROVIDER_ID,
-          //   provider: new FacebookLoginProvider('clientId')
-          // }
-        ],
-        onError: (err) => {
-          console.error(err);
-        }
-      } as SocialAuthServiceConfig,
-    }
+
   ],
   bootstrap: [AppComponent]
 })

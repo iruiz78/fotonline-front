@@ -1,0 +1,31 @@
+<div class="container-auth" [formGroup]="form">
+  <p class="hint-text">Inicie sesión con su cuenta de redes sociales</p>
+  <div class="">
+    <asl-google-signin-button width="280" type='standard' text="continue_with" size='medium'></asl-google-signin-button>
+    <!-- <a href="#" class="btn btn-primary pull-left"><i class="fa fa-facebook"></i> Facebook</a>
+    <a href="#" class="btn btn-info pull-right"><i class="fa fa-twitter"></i> Twitter</a> -->
+  </div>
+  <div class="or-seperator"><b>O</b></div>
+  <div class="form-group">
+    <input type="text" class="form-control" formControlName="mail" placeholder="Correo" required="required">
+  </div>
+  <div class="form-group mt-2">
+    <input type="password" class="form-control" formControlName="password" placeholder="Contraseña" required="required">
+  </div>
+
+  <div class="row mt-2">
+    <div class="col-12">
+      <small class="text-danger" *ngIf="loginFailed">
+        La dirección de correo electrónico o la contraseña que has introducido no son correctas.
+      </small>
+    </div>
+  </div>
+
+  <button [disabled]="form.invalid" pButton pRipple class="p-button mt-4" style="height: 40px;" (click)="onSubmit()">
+    Ingresar
+  </button>
+
+  <div class="form-footer mt-4" style="font-size: 12px;">
+    <a href="#">¿Olvidaste tu contraseña?</a>
+  </div>
+</div>

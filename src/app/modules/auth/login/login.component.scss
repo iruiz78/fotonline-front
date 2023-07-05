@@ -1,0 +1,32 @@
+.container-auth {
+  border: 1px solid lightgray;
+  background-color: whitesmoke;
+  text-align: center;
+  padding: 20px;
+  max-width: 320px;
+}
+
+.or-seperator {
+  margin-top: 32px;
+text-align: center;
+border-top: 1px solid #e0e0e0;
+}
+.or-seperator b {
+color: #666;
+  padding: 0 8px;
+width: 30px;
+height: 30px;
+font-size: 13px;
+text-align: center;
+line-height: 26px;
+background: #fff;
+display: inline-block;
+border: 1px solid #e0e0e0;
+border-radius: 50%;
+position: relative;
+top: -15px;
+z-index: 1;
+}
+.navbar .checkbox-inline {
+font-size: 13px;
+}

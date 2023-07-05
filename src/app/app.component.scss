@@ -1,0 +1,16 @@
+.container-user-logged {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: lightgray;
+  border-radius: 5px;
+  padding: 4px 8px;
+
+  label {
+    margin-left: 5px
+  }
+}
+
+// .test {
+//   position: fixed;
+// }

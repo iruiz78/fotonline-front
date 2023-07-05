@@ -1,0 +1,45 @@
+<div class="container-auth" [formGroup]="form" *ngIf="!registerFinished">
+  <p class="hint-text">¡Rellena este formulario para crear tu cuenta!</p>
+  <div class="form-group">
+    <input type="text" class="form-control" formControlName="mail" placeholder="Correo" required>
+  </div>
+  <div class="row form-group mt-2">
+    <div class="col-6">
+      <input type="text" class="form-control" formControlName="name" placeholder="Nombre" required="required">
+    </div>
+    <div class="col-6">
+      <input type="text" class="form-control" formControlName="lastname" placeholder="Apellido" required="required">
+    </div>
+  </div>
+  <div class="form-group mt-2">
+    <input type="password" class="form-control" formControlName="password" placeholder="Contraseña" required="required">
+  </div>
+  <div class="form-group mt-2">
+    <input type="password" class="form-control" formControlName="confirmPassword" placeholder="Confirmar Contraseña" required="required">
+  </div>
+  <!-- <div class="form-group mt-3">
+    <label class="checkbox-inline"><input type="checkbox" required="required" class="mt-1">Acepto los <a href="#">Términos &amp; Condiciones</a></label>
+  </div> -->
+  <button pButton pRipple [disabled]="!this.form.valid" class="p-button mt-4" style="height: 40px;" (click)="onSubmit()">
+    Registrarse
+  </button>
+</div>
+
+<div class="container-auth" *ngIf="registerFinished">
+  <p class="hint-text">¡Registro realizado con éxito!</p>
+
+  <div class="wrapper">
+    <svg
+      class="checkmark"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 52 52"
+    >
+      <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+      <path
+        class="checkmark__check"
+        fill="none"
+        d="M14.1 27.2l7.1 7.2 16.7-16.8"
+      />
+    </svg>
+  </div>
+</div>

@@ -5,6 +5,10 @@
   "projectType": "application",
   "targets": {
     "e2e": {
+      "inputs": [
+        "default",
+        "^production"
+      ],
       "executor": "@nx/cypress:cypress",
       "options": {
         "cypressConfig": "apps/client-e2e/cypress.config.ts",
@@ -21,13 +25,25 @@
       }
     },
     "lint": {
+      "inputs": [
+        "default",
+        "{workspaceRoot}/.eslintrc.json",
+        "{workspaceRoot}/.eslintignore"
+      ],
       "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
+      "outputs": [
+        "{options.outputFile}"
+      ],
       "options": {
-        "lintFilePatterns": ["apps/client-e2e/**/*.{js,ts}"]
-      }
+        "lintFilePatterns": [
+          "apps/client-e2e/**/*.{js,ts}"
+        ]
+      },
+      "configurations": {}
     }
   },
   "tags": [],
-  "implicitDependencies": ["client"]
+  "implicitDependencies": [
+    "client"
+  ]
 }

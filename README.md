@@ -12,6 +12,8 @@ NX Angular
 npm install -g @nrwl/cli
 npx nx@latest init --integrated
 
+npx nx g @nx/angular:lib services
+
 npx nx serve
 npx nx graph 
 

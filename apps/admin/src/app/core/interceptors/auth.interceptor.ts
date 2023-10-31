@@ -1,11 +1,11 @@
 import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from "@angular/common/http";
 import { mergeMap, Observable, tap } from "rxjs";
 import { Injectable } from "@angular/core";
-import { AuthenticationService } from "../services/authentication.service";
+import { AuthenticationService } from '@foto-online/services';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-
+  private isRefreshing = false;
   constructor(private authenticationService: AuthenticationService) { }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -15,10 +15,16 @@ export class AuthInterceptor implements HttpInterceptor {
 
     return next.handle(request).pipe(
       tap({
-        next: () => null,
+        next: () => {
+            const isLoggedIn = this.authenticationService.userValue;
+
+            request = request.clone({
+            setHeaders: { Authorization: `Bearer ${isLoggedIn.token}` }
+          });
+        },
         error: (error: HttpErrorResponse) => {
 
-          if (error.status === 401 && !request.url.includes('auth/signin')) {
+          if (error.status === 401 && !request.url.includes('/auth/login')) {
 
           }
         },
@@ -47,6 +53,30 @@ export class AuthInterceptor implements HttpInterceptor {
 
     // return next.handle(request);
   }
+
+  // private handle401Error(request: HttpRequest<any>, next: HttpHandler) {
+  //   if (!this.isRefreshing) {
+  //     this.isRefreshing = true;
+  //     // this.refreshTokenSubject.next(null);
+
+  //     const isLoggedIn = this.authenticationService.userValue;
+
+  //     if (token)
+  //     this.authenticationService.RefreshAuthentication().subscribe(data => {
+  //       this.storageService.set('authentication', JSON.stringify(data.data.result));
+  //      }, err => {
+  //       console.error(err);
+  //      })
+  //   }
+  // }
+
+  // RefreshToken(){
+  //   this.authService.RefreshAuthentication().subscribe(data => {
+  //     this.storageService.set('authentication', JSON.stringify(data.data.result));
+  //    }, err => {
+  //     console.error(err);
+  //    })
+  // }
 
   // GetToken(url:string): string {
   //   let authentication = this.storageService.get('authentication');

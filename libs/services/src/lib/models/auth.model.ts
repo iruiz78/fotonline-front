@@ -11,3 +11,17 @@ export class AuthResponse {
   expiredDate: Date;
   mail: string;
 }
+
+export class SendCodeResetPassword {
+  mail: string;
+}
+
+export class ValidateCodeResetPassword {
+  mail: string;
+  code: string;
+}
+
+export class ResetPassword {
+  userId: number;
+  password: string;
+}

@@ -3,8 +3,9 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, map } from 'rxjs';
 import { StorageService } from './storage.service';
 import { environment } from 'apps/client/src/environments/environment';
-import { AuthRequest, AuthResponse } from './models/auth.model';
+import { AuthRequest, AuthResponse, ResetPassword, SendCodeResetPassword, ValidateCodeResetPassword } from './models/auth.model';
 import { GenericResponse } from './models/communication/genericResponse';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,8 @@ export class AuthenticationService {
   public user: Observable<AuthResponse | null>;
 
   constructor(private http: HttpClient,
-              private storageService: StorageService) {
+              private storageService: StorageService,
+              private router: Router) {
 
     const userData = this.storageService.get('user')?.data;
     const currentUser = userData ? JSON.parse(userData) : null;
@@ -40,8 +42,22 @@ export class AuthenticationService {
             }));
   }
 
+  SendCodeResetPassword(sendCodeResetPassword: SendCodeResetPassword) {
+    return this.http.post<GenericResponse<any>>(`${environment.api_url}/Auth/SendCodeResetPassword`, sendCodeResetPassword);
+  }
+
+  ValidateCodeResetPassword(validateCodeResetPassword: ValidateCodeResetPassword) {
+    return this.http.post<GenericResponse<any>>(`${environment.api_url}/Auth/ValidateCodeResetPassword`, validateCodeResetPassword);
+  }
+
+  ResetPassword(resetPassword: ResetPassword) {
+    return this.http.post<GenericResponse<any>>(`${environment.api_url}/Auth/ResetPassword`, resetPassword);
+  }
+
   Logout() {
     this.storageService.clear();
     this.userSubject.next(null);
+
+    this.router.navigate(['/auth/login']);
   }
 }

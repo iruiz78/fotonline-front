@@ -18,6 +18,19 @@ npx nx serve
 npx nx graph 
 
 npx nx serve admin
+npx nx serve admin --port 4300
+npx nx serve client
+
+Create component 
+Start in path app..
+npx nx g c feature-mydialog
+
+<!-- npx nx generate @nrwl/angular:component board --project=myapp
+
+npx nx generate @nrwl/angular:component modules/auth/test --project=admin -->
+
+OK
+npx nx generate @nx/angular:component modules/auth/test --project=admin
 
 Create Workspace
 npx create-nx-workspace --preset=apps

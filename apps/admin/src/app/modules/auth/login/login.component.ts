@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { LayoutService } from '../../../_layout/service/app.layout.service';
-import { AuthenticationService, DataService, AuthRequest, LoginProvider, ActionEvent } from '@foto-online/services';
+import { AuthenticationService, DataService, AuthRequest, LoginProvider } from '@foto-online/services';
 import { FormGroup, Validators } from '@angular/forms';
 import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -19,6 +19,7 @@ import { MessageService } from 'primeng/api';
     `]
 })
 export class LoginComponent {
+  @ViewChild('inputEmail') inputEmail: ElementRef;
   valCheck: string[] = ['remember'];
   password!: string;
   form: FormGroup;
@@ -33,6 +34,10 @@ export class LoginComponent {
 
   ngOnInit(): void {
     this.createForm();
+
+    setTimeout(()=>{
+      this.inputEmail.nativeElement.focus();
+    }, 0);
   }
 
   createForm() {

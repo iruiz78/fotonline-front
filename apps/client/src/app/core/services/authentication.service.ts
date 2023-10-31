@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AuthRequest, AuthResponse } from '../models/auth.model';
+import { AuthRequest, AuthResponse, RefreshTokenRequest } from '../models/auth.model';
 import { GenericResponse } from '../models/communication/genericResponse';
 import { BehaviorSubject, Observable, map } from 'rxjs';
 import { StorageService } from './storage.service';
@@ -38,6 +38,10 @@ export class AuthenticationService {
 
                         return response;
                       }));
+  }
+
+  RefreshAuthentication(refreshTokenRequest: RefreshTokenRequest): Observable<any> {
+    return this.http.post(`${environment.api_url}/Auth/RefreshToken`, refreshTokenRequest);
   }
 
   Logout() {

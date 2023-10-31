@@ -11,3 +11,10 @@ export class AuthResponse {
   expiredDate: Date;
   mail: string;
 }
+
+export class RefreshTokenRequest {
+  tokenExpired: string;
+  tokenRefresh: string;
+  userId: Date;
+  mail: string;
+}

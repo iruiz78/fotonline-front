@@ -5,17 +5,30 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppLayoutModule } from './_layout/app.layout.module';
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { ToastModule } from 'primeng/toast';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { NgxSpinnerModule } from 'ngx-spinner';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { FormsModule } from '@angular/forms';
 // import { FeatureMydialogComponent } from './feature-mydialog/feature-mydialog.component';
-import { UserComponent } from './modules/user/user.component';
 
 @NgModule({
   // declarations: [AppComponent, FeatureMydialogComponent, UserComponent],
-  declarations: [AppComponent, UserComponent],
-  imports: [BrowserModule, AppRoutingModule, AppLayoutModule, ToastModule],
+  declarations: [
+    AppComponent
+  ],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    AppLayoutModule,
+    ToastModule,
+    NgxSpinnerModule,
+    BrowserAnimationsModule,
+    FormsModule
+  ],
   providers: [
     { provide: LocationStrategy, useClass: HashLocationStrategy },
     MessageService,
+    ConfirmationService
   ],
   bootstrap: [AppComponent],
 })

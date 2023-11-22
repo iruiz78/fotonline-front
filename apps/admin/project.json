@@ -36,6 +36,7 @@
           "node_modules/primeicons/primeicons.css",
           "node_modules/bootstrap/dist/css/bootstrap.min.css",
           "node_modules/primeflex/primeflex.scss",
+          "node_modules/ngx-spinner/animations/ball-scale-multiple.css",
           "apps/admin/src/styles.scss"
         ],
         "scripts": [

@@ -19,4 +19,8 @@ export class AppTopBarComponent {
 
     constructor(public layoutService: LayoutService,
                 public authenticationService: AuthenticationService) { }
+
+    testApi() {
+      this.authenticationService.TestConnectionApi().subscribe();
+    }
 }

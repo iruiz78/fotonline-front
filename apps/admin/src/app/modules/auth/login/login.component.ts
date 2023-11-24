@@ -60,7 +60,6 @@ export class LoginComponent {
   login(authRequest: AuthRequest) {
     this.authService.Login(authRequest).subscribe({
       next: (data) => {
-        console.log(data);
 
         if(data.statusCode == 401)
           this.messageService.add({ severity: 'warn', summary: 'Atención!', detail: 'La dirección de correo electrónico o la contraseña que has introducido no son correctas.' });

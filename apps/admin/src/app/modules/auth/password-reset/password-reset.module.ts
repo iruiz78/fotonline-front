@@ -9,6 +9,8 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { DividerModule } from 'primeng/divider';
+import { InputMaskModule } from 'primeng/inputmask';
+import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
 
 @NgModule({
   declarations: [PasswordResetComponent],
@@ -23,9 +25,12 @@ import { DividerModule } from 'primeng/divider';
     InputTextModule,
     FormsModule,
     PasswordModule,
-    DividerModule
+    DividerModule,
+    InputMaskModule,
+    NgxMaskDirective,
+    NgxMaskPipe
    ],
   exports: [],
-  providers: [],
+  providers: [provideNgxMask()],
 })
 export class PasswordResetModule {}

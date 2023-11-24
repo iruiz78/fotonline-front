@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, map } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, map } from 'rxjs';
 import { StorageService } from './storage.service';
 import { environment } from 'apps/client/src/environments/environment';
-import { AuthRequest, AuthResponse, ResetPassword, SendCodeResetPassword, ValidateCodeResetPassword } from './models/auth.model';
+import { AuthRequest, AuthResponse, RefreshTokenRequest, ResetPassword, SendCodeResetPassword, ValidateCodeResetPassword } from './models/auth.model';
 import { GenericResponse } from './models/communication/genericResponse';
 import { Router } from '@angular/router';
 
@@ -29,6 +29,10 @@ export class AuthenticationService {
     return this.userSubject ? this.userSubject.value : null;
   }
 
+  TestConnectionApi() {
+    return this.http.post<any>(`${environment.api_url}/Auth/TestConnectionApi`, {});
+  }
+
   Login(authRequest: AuthRequest) {
     return this.http.post<GenericResponse<AuthResponse>>(`${environment.api_url}/Auth/Login`, authRequest)
           .pipe(map(response => {
@@ -40,6 +44,12 @@ export class AuthenticationService {
 
               return response;
             }));
+  }
+
+  RefreshToken(refreshTokenRequest: RefreshTokenRequest) {
+    console.log("REFRES REQ");
+
+    return this.http.post<GenericResponse<any>>(`${environment.api_url}/Auth/RefreshToken`, refreshTokenRequest);
   }
 
   SendCodeResetPassword(sendCodeResetPassword: SendCodeResetPassword) {

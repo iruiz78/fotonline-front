@@ -22,6 +22,12 @@ export class ValidateCodeResetPassword {
 }
 
 export class ResetPassword {
-  userId: number;
+  mail: string;
   password: string;
+}
+
+export class RefreshTokenRequest {
+  tokenExpired: string;
+  tokenRefresh: string;
+  userId: number;
 }

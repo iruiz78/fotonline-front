@@ -8,11 +8,21 @@ import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 // import { FeatureMydialogComponent } from './feature-mydialog/feature-mydialog.component';
 import { UserComponent } from './modules/user/user.component';
+import { CoreModule } from './core/core.module';
 
 @NgModule({
   // declarations: [AppComponent, FeatureMydialogComponent, UserComponent],
-  declarations: [AppComponent, UserComponent],
-  imports: [BrowserModule, AppRoutingModule, AppLayoutModule, ToastModule],
+  declarations: [
+    AppComponent,
+    UserComponent
+  ],
+  imports: [
+    BrowserModule,
+    CoreModule,
+    AppRoutingModule,
+    AppLayoutModule,
+    ToastModule
+  ],
   providers: [
     { provide: LocationStrategy, useClass: HashLocationStrategy },
     MessageService,

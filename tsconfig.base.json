@@ -16,6 +16,7 @@
     "baseUrl": ".",
     "paths": {
       "@foto-online/auth": ["libs/auth/src/index.ts"],
+      "@foto-online/helpers": ["libs/helpers/src/index.ts"],
       "@foto-online/primeng-ui": ["libs/primeng-ui/src/index.ts"],
       "@foto-online/services": ["libs/services/src/index.ts"],
       "@foto-online/test": ["libs/test/src/index.ts"]

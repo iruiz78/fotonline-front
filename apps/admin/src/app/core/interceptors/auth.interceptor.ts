@@ -1,57 +1,83 @@
 import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from "@angular/common/http";
-import { mergeMap, Observable, tap } from "rxjs";
+import { catchError, from, mergeMap, Observable, switchMap, tap, throwError } from "rxjs";
 import { Injectable } from "@angular/core";
-import { AuthenticationService } from '@foto-online/services';
+import { AuthenticationService, RefreshTokenRequest, StorageService } from '@foto-online/services';
+import { Router } from "@angular/router";
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
   private isRefreshing = false;
-  constructor(private authenticationService: AuthenticationService) { }
+  userSubject: any;
+  constructor(private authenticationService: AuthenticationService,
+              private storageService: StorageService,
+              private router: Router) { }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    // let authReq = request;
-    console.log("request", request);
+    const isLoggedIn = this.authenticationService.userValue;
 
+    console.log("isLoggedIn", isLoggedIn);
 
-    return next.handle(request).pipe(
-      tap({
-        next: () => {
-            const isLoggedIn = this.authenticationService.userValue;
-
-            request = request.clone({
-            setHeaders: { Authorization: `Bearer ${isLoggedIn.token}` }
-          });
-        },
-        error: (error: HttpErrorResponse) => {
-
-          if (error.status === 401 && !request.url.includes('/auth/login')) {
-
+      if(isLoggedIn?.token) {
+        request = request.clone({
+          setHeaders: {
+            Authorization: `Bearer ${isLoggedIn.token}`
           }
-        },
-      },)
+       });
+      }
+
+      return next.handle(request).pipe(
+        catchError((error: HttpErrorResponse) => {
+          if (error?.status == 401) {
+            return this.refreshTokenMethod(request, next, isLoggedIn);
+          } else {
+            return throwError(() => error);
+          }
+        })
+      );
+  }
+
+  refreshTokenMethod(
+    request: HttpRequest<any>,
+    next: HttpHandler,
+    isLoggedIn: any
+  ): Observable<HttpEvent<any>> {
+    let refreshTokenRequest = new RefreshTokenRequest();
+    refreshTokenRequest.tokenExpired = isLoggedIn.token;
+    refreshTokenRequest.tokenRefresh = isLoggedIn.tokenRefresh;
+    // refreshTokenRequest.token = isLoggedIn.mail;
+    refreshTokenRequest.userId = 7;
+
+    return from(this.authenticationService.RefreshToken(refreshTokenRequest)).pipe(
+      switchMap((res: any) => {
+        // this.signupService.clearLoginResponse();
+        console.log("res", res);
+
+        if(res.statusCode !== 400) {
+          this.storageService.clear();
+
+          this.storageService.set('user', res.entity);
+          // this.userSubject.next(res.entity);
+          // this.userSubject.next(res);
+
+          request = request.clone({
+            setHeaders: {
+              Authorization: 'Bearer ' + res.entity.token,
+            },
+          });
+        }
+
+        return next.handle(request);
+      }),
+      catchError((error) => {
+        //Refresh Token Issue.
+        if (error.status == 404) {
+          console.log("REDIRECT");
+
+          // this.redirectLogout();
+        }
+        return throwError(() => error);
+      })
     );
-
-      // const isLoggedIn = this.authenticationService.userValue;
-
-      // console.log("isLoggedIn", isLoggedIn);
-
-
-      // if (isLoggedIn) {
-      //     request = request.clone({
-      //         setHeaders: { Authorization: `Bearer ${isLoggedIn.token}` }
-      //     });
-      // }
-
-      // return next.handle(request);
-
-    // let token = this.GetToken();
-    // request = request.clone({
-    //     setHeaders: {
-    //       Authorization: `Bearer ${token}`
-    //     }
-    // });
-
-    // return next.handle(request);
   }
 
   // private handle401Error(request: HttpRequest<any>, next: HttpHandler) {

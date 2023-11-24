@@ -1,0 +1,25 @@
+<div class="animated fadeIn">
+  <div class="card card-default">
+    <div class="card-header">
+      <h4>Usuarios</h4>
+    </div>
+
+    <div class="card-body">
+      <ngx-spinner name="sp" bdColor="#2F353A" size="default" color="#20A8D8" type="ball-scale-multiple"
+        [fullScreen]="false">
+      </ngx-spinner>
+      <div class="row g-3">
+        <div class="col-md-3">
+        </div>
+      </div>
+
+      <div *ngIf="true" class="form-actions mb-2 mt-2 text-right">
+        <button pButton pRipple (click)="new()" label="Nuevo" class="p-button-success ml-4" icon="pi pi-plus"></button>
+      </div>
+      <div *ngIf="true" class="mt-4">
+        <app-table id="tableSummary" [value]="users" [columns]="columns" [configuration]="tableConfiguration" (deleteEvent)="disable($event)" (editEvent)="edit($event)">
+        </app-table>
+      </div>
+    </div>
+  </div>
+</div>

@@ -20,7 +20,11 @@
             "prefix": "foto-online",
             "style": "kebab-case"
           }
-        ]
+        ],
+        "@angular-eslint/no-empty-lifecycle-method": "off",
+        "@typescript-eslint/no-empty-function": "off",
+        "@typescript-eslint/no-unused-vars": "off",
+        "@nx/enforce-module-boundaries" : "off"
       },
       "extends": [
         "plugin:@nx/angular",

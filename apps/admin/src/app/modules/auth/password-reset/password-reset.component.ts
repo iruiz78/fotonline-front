@@ -32,7 +32,7 @@ export class PasswordResetComponent {
     const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
     this.formSendCode = this.fb.group({
-      mail: [null, [Validators.required, Validators.pattern(emailRegex), Validators.maxLength(100)]]
+      email: [null, [Validators.required, Validators.pattern(emailRegex), Validators.maxLength(100)]]
     });
 
     this.formEnterCode = this.fb.group({
@@ -88,7 +88,7 @@ export class PasswordResetComponent {
 
     let request = new ValidateCodeResetPassword();
     request = this.formEnterCode.value;
-    request.mail = this.formSendCode.controls['mail'].value;
+    request.email = this.formSendCode.controls['email'].value;
 
     this.authenticationService.ValidateCodeResetPassword(request).subscribe({
       next: () => {
@@ -110,7 +110,7 @@ export class PasswordResetComponent {
 
     let request = new ResetPassword();
     request = this.formResetPassword.value;
-    request.mail = this.formSendCode.controls['mail'].value;
+    request.email = this.formSendCode.controls['email'].value;
 
     this.authenticationService.ResetPassword(request).subscribe({
       next: () => {

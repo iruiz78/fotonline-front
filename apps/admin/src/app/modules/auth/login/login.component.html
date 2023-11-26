@@ -11,7 +11,7 @@
 
                 <div [formGroup]="form" (keyup.enter)="onSubmit()">
                   <label for="email1" class="block text-900 text-xl font-medium mb-2">Correo</label>
-                  <input #inputEmail id="email1" formControlName="mail" type="text" placeholder="Ingrese Correo" pInputText class="w-full md:w-30rem mb-5" style="padding:1rem">
+                  <input #inputEmail id="email1" formControlName="email" type="text" placeholder="Ingrese Correo" pInputText class="w-full md:w-30rem mb-5" style="padding:1rem">
 
                   <label for="password1" class="block text-900 font-medium text-xl mb-2">Contraseña</label>
                   <p-password id="password1" [feedback]="false" formControlName="password" placeholder="Ingrese Contraseña" [toggleMask]="true" styleClass="mb-5" inputStyleClass="w-full p-3 md:w-30rem"></p-password>

@@ -10,14 +10,13 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
 // import { FeatureMydialogComponent } from './feature-mydialog/feature-mydialog.component';
-import { UserComponent } from './modules/user/user.component';
+// import { UserComponent } from './modules/user/user.component';
 import { CoreModule } from './core/core.module';
 
 @NgModule({
   // declarations: [AppComponent, FeatureMydialogComponent, UserComponent],
   declarations: [
-    AppComponent,
-    UserComponent
+    AppComponent
   ],
   imports: [
     BrowserModule,

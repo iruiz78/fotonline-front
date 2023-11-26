@@ -2,8 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, Subject, map } from 'rxjs';
 import { StorageService } from './storage.service';
-import { environment } from 'apps/client/src/environments/environment';
-import { AuthRequest, AuthResponse, RefreshTokenRequest, ResetPassword, SendCodeResetPassword, ValidateCodeResetPassword } from './models/auth.model';
+import { environment } from 'environments/environment';
+import { AuthRequest, AuthResponse, RefreshTokenRequest, ResetPassword, SendCodeResetPassword, UserLogged, ValidateCodeResetPassword } from './models/auth.model';
 import { GenericResponse } from './models/communication/genericResponse';
 import { Router } from '@angular/router';
 
@@ -25,7 +25,7 @@ export class AuthenticationService {
     this.user = this.userSubject.asObservable();
   }
 
-  public get userValue() {
+  public get userValue(): UserLogged {
     return this.userSubject ? this.userSubject.value : null;
   }
 
@@ -37,19 +37,24 @@ export class AuthenticationService {
     return this.http.post<GenericResponse<AuthResponse>>(`${environment.api_url}/Auth/Login`, authRequest)
           .pipe(map(response => {
 
-              if(response.statusCode !== 401) {
-                this.storageService.set('user', response.entity);
-                this.userSubject.next(response.entity);
-              }
+            if(response.statusCode !== 401) {
+              this.storageService.set('user', response.entity);
+              this.userSubject.next(response.entity);
+            }
 
-              return response;
-            }));
+            return response;
+          }));
   }
 
   RefreshToken(refreshTokenRequest: RefreshTokenRequest) {
-    console.log("REFRES REQ");
+    return this.http.post<GenericResponse<AuthResponse>>(`${environment.api_url}/Auth/RefreshToken`, refreshTokenRequest)
+    .pipe(map(response => {
 
-    return this.http.post<GenericResponse<any>>(`${environment.api_url}/Auth/RefreshToken`, refreshTokenRequest);
+      this.storageService.set('user', response.entity);
+      this.userSubject.next(response.entity);
+
+      return response;
+    }));
   }
 
   SendCodeResetPassword(sendCodeResetPassword: SendCodeResetPassword) {

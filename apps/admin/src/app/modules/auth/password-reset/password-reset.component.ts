@@ -1,6 +1,9 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { AuthenticationService, ResetPassword, SendCodeResetPassword, ValidateCodeResetPassword } from '@foto-online/services';
+import { MessageService } from 'primeng/api';
+import { InputValidators } from '@foto-online/helpers';
 
 @Component({
   selector: 'foto-online-password-reset',
@@ -17,7 +20,9 @@ export class PasswordResetComponent {
   submit: boolean = false;
 
   constructor(public fb: FormBuilder,
-              private authenticationService: AuthenticationService) {}
+              private authenticationService: AuthenticationService,
+              private messageService: MessageService,
+              private router: Router) {}
 
   ngOnInit(): void {
     this.createForms();
@@ -27,7 +32,7 @@ export class PasswordResetComponent {
     const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
     this.formSendCode = this.fb.group({
-      mail: [null, [Validators.required, Validators.pattern(emailRegex), Validators.maxLength(100)]]
+      email: [null, [Validators.required, Validators.pattern(emailRegex), Validators.maxLength(100)]]
     });
 
     this.formEnterCode = this.fb.group({
@@ -63,16 +68,16 @@ export class PasswordResetComponent {
     request = this.formSendCode.value;
 
     this.authenticationService.SendCodeResetPassword(request).subscribe({
-      next(value) {
-        console.log("SendCodeResetPassword", value);
-
+      next: () => {
         this.stepformSendCode = false;
         this.stepformEnterCode = true;
         this.submit = false;
       },
-      error(err) {
+      error: (err) => {
+        this.messageService.add({ life: 6000, severity: 'warn', summary: 'Atención!', detail: err.error.message });
         this.submit = false;
-      },
+        console.error(err);
+      }
     });
   }
 
@@ -83,18 +88,19 @@ export class PasswordResetComponent {
 
     let request = new ValidateCodeResetPassword();
     request = this.formEnterCode.value;
+    request.email = this.formSendCode.controls['email'].value;
 
     this.authenticationService.ValidateCodeResetPassword(request).subscribe({
-      next(value) {
-        console.log("ValidateCodeResetPassword", value);
-
+      next: () => {
         this.stepformEnterCode = false;
         this.stepformResetPassword = true;
         this.submit = false;
       },
-      error(err) {
+      error: (err) => {
+        this.messageService.add({ life: 6000, severity: 'warn', summary: 'Atención!', detail: err.error.message });
         this.submit = false;
-      },
+        console.error(err);
+      }
     });
   }
 
@@ -103,19 +109,23 @@ export class PasswordResetComponent {
     this.submit = true;
 
     let request = new ResetPassword();
-    request = this.formEnterCode.value;
+    request = this.formResetPassword.value;
+    request.email = this.formSendCode.controls['email'].value;
 
     this.authenticationService.ResetPassword(request).subscribe({
-      next(value) {
-        console.log("ResetPassword", value);
-
-        this.stepformEnterCode = false;
-        this.stepformResetPassword = true;
-        this.submit = false;
+      next: () => {
+        this.messageService.add({ life: 6000, severity: 'success', summary: 'Éxito!', detail: 'Contraseña modificada correctamente.' });
+        this.router.navigate(['/auth/login']);
       },
-      error(err) {
+      error: (err) => {
+        this.messageService.add({ life: 6000, severity: 'warn', summary: 'Atención!', detail: err.error.message });
         this.submit = false;
+        console.error(err);
       },
     });
+  }
+
+  keyPressInputCode(event: any) {
+    InputValidators.keyPressOnlyNumbers(event);
   }
 }

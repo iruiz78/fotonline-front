@@ -12,7 +12,7 @@ import { NotLoggedin } from './core/guards/not-loggedin.guard';
               canActivate: [Loggedin],
               children: [
                   { path: 'dashboard', loadChildren: () => import('./modules/dashboard/dashboard.module').then(m => m.DashboardModule) },
-                  // { path: 'uikit', loadChildren: () => import('./demo/components/uikit/uikit.module').then(m => m.UIkitModule) },
+                  { path: 'user', loadChildren: () => import('./modules/user/user.module').then(m => m.UserModule) },
               ]
           },
           {
@@ -21,6 +21,11 @@ import { NotLoggedin } from './core/guards/not-loggedin.guard';
             runGuardsAndResolvers: 'always',
             loadChildren: () => import('./modules/auth/auth.module').then(m => m.AuthModule)
           },
+          // {
+          //   path: 'user', component: AppLayoutComponent,
+          //   canActivate: [Loggedin],
+          //   loadChildren: () => import('./modules/user/user.module').then(m => m.UserModule)
+          // },
           { path: '', pathMatch: 'full', redirectTo: '/auth/login' },
           { path: '**', redirectTo: '/auth/login' }
       ], { scrollPositionRestoration: 'enabled', anchorScrolling: 'enabled', onSameUrlNavigation: 'reload' })

@@ -1,0 +1,113 @@
+<div class="animated fadeIn">
+  <div class="card card-default">
+    <div class="card-header">
+      <h4>Usuario</h4>
+    </div>
+
+    <div class="card-body">
+      <ngx-spinner name="sp" bdColor="#2F353A" size="default" color="#20A8D8" type="ball-scale-multiple"
+        [fullScreen]="false">
+      </ngx-spinner>
+
+      <form class="card-body" (ngSubmit)="onSubmit()" [formGroup]="form">
+        <div class="row">
+          <div class="col-12 col-sm-12 col-md-4 col-lg-4">
+            <label>Nombre</label>
+            <input type="text" formControlName="fullName" class="form-control" id="fullName" placeholder="Ingrese Nombre" [ngClass]="(form.get('fullName')?.errors || this.form.get('fullName')?.hasError('whiteSpace') ) && submited ? 'is-invalid' : ''">
+            <div class="invalid-feedback">
+              Ingrese Nombre.
+            </div>
+          </div>
+          <div class="col-12 col-sm-12 col-md-4 col-lg-4">
+            <label>Correo Electrónico</label>
+            <input type="text" formControlName="email" class="form-control" id="email" placeholder="Ingrese Correo" [ngClass]="form.get('email')?.errors && submited ? 'is-invalid' : ''">
+            <div class="invalid-feedback">
+              Ingrese Correo.
+            </div>
+          </div>
+
+          <div *ngIf="isNew" class="col-6 col-sm-6 col-md-6 col-lg-2">
+            <label>Contraseña</label>
+            <p-password formControlName="password" inputStyleClass="form-control"
+            placeholder="Contraseña"
+            promptLabel="Ingrese Contraseña"
+            weakLabel="Débil"
+            mediumLabel="Média"
+            strongLabel="Fuerte"
+            [feedback]="true"
+            [toggleMask]="true"
+            [style]="{'width':'100%'}"
+            autocomplete="off"
+            [ngClass]="this.form.get('password')?.errors && submited ? 'is-invalid' : ''"
+            >
+            </p-password>
+            <div *ngIf="this.form.get('password')?.hasError('hasSmallCase')" class="invalid-feedback d-block">
+              Ingrese al menos un minúscula
+            </div>
+            <div *ngIf="this.form.get('password')?.hasError('hasCapitalCase')" class="invalid-feedback d-block">
+              Ingrese al menos una mayúscula
+            </div>
+            <div *ngIf="this.form.get('password')?.hasError('hasNumber')" class="invalid-feedback d-block">
+              Ingrese  al menos un número
+            </div>
+            <div *ngIf="this.form.get('password')?.hasError('hasSpecialCharacters')" class="invalid-feedback d-block">
+              Ingrese  al menos un caracter especial
+            </div>
+            <div *ngIf="this.form.get('password')?.hasError('minlength')" class="invalid-feedback d-block">
+              Ingrese al menos 6 caracteres
+            </div>
+          </div>
+
+          <div *ngIf="isNew" class="col-6 col-sm-6 col-md-6 col-lg-2">
+            <label>Confirmar contraseña</label>
+            <p-password formControlName="confirmPassword" inputStyleClass="form-control"
+            placeholder="Contraseña"
+            [toggleMask]="true"
+            [feedback]="false"
+            [style]="{'width':'100%'}"
+            autocomplete="off"
+            [ngClass]="this.form.get('confirmPassword')?.errors && submited ? 'is-invalid' : ''"
+            >
+            </p-password>
+            <div *ngIf="this.form?.hasError('mismatch')" class="invalid-feedback d-block">
+              Las contraseñas no coinciden
+            </div>
+          </div>
+
+          <div class="col-12 col-sm-12 col-md-4 col-lg-4">
+            <label>Rol</label>
+            <select class="form-control" formControlName="rolId" [ngClass]="form.get('rolId')?.errors && submited? 'is-invalid' : ''">
+              <option [disabled]="true" [value]="null" selected="selected">Seleccione Rol</option>
+              <option *ngFor="let rol of rols" [value]="rol.id">{{ rol.name }}</option>
+            </select>
+            <div class="invalid-feedback">
+              Ingrese Rol.
+            </div>
+          </div>
+          <div class="col-12 col-sm-12 col-md-4 col-lg-4">
+            <label>Módulos</label>
+            <p-pickList [source]="modulesSource" [target]="modulesTarget" sourceHeader="Disponibles" targetHeader="Seleccionados"
+            [dragdrop]="true" [responsive]="true" [sourceStyle]="{ height: '15rem' }" [targetStyle]="{ height: '15rem' }" breakpoint="1000px">
+              <ng-template let-module pTemplate="item">
+                  <div class="flex flex-wrap p-2 align-items-center gap-3">
+                      <i class="pi pi-fw pi-users text-2xl text-yellow-700"></i>
+                      <div class="flex-1 flex flex-column gap-2">
+                          <span class="font-bold">{{ module.name }}</span>
+                      </div>
+                  </div>
+              </ng-template>
+            </p-pickList>
+          </div>
+        </div>
+
+        <div class="row mt-4">
+          <div class="col-12 text-right">
+            <a [routerLink]="['/admin/user/list']" class="btn btn-secondary mr-2">Cancelar</a>
+            <button type="submit" class="btn btn-primary">Guardar</button>
+          </div>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>

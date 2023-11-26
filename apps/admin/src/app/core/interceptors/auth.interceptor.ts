@@ -1,97 +1,60 @@
 import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from "@angular/common/http";
-import { mergeMap, Observable, tap } from "rxjs";
+import { catchError, from, Observable, switchMap, throwError } from "rxjs";
 import { Injectable } from "@angular/core";
-import { AuthenticationService } from '@foto-online/services';
+import { AuthenticationService, RefreshTokenRequest, UserLogged } from '@foto-online/services';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  private isRefreshing = false;
   constructor(private authenticationService: AuthenticationService) { }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    // let authReq = request;
-    console.log("request", request);
+    const userLogged: UserLogged = this.authenticationService.userValue;
 
+    if(userLogged?.token) {
+      request = request.clone({
+        setHeaders: {
+          Authorization: `Bearer ${userLogged.token}`
+        }
+      });
+    }
 
     return next.handle(request).pipe(
-      tap({
-        next: () => {
-            const isLoggedIn = this.authenticationService.userValue;
-
-            request = request.clone({
-            setHeaders: { Authorization: `Bearer ${isLoggedIn.token}` }
-          });
-        },
-        error: (error: HttpErrorResponse) => {
-
-          if (error.status === 401 && !request.url.includes('/auth/login')) {
-
-          }
-        },
-      },)
+      catchError((error: HttpErrorResponse) => {
+        if (error?.status == 401) {
+          return this.refreshTokenMethod(request, next, userLogged);
+        } else {
+          return throwError(() => error);
+        }
+      })
     );
-
-      // const isLoggedIn = this.authenticationService.userValue;
-
-      // console.log("isLoggedIn", isLoggedIn);
-
-
-      // if (isLoggedIn) {
-      //     request = request.clone({
-      //         setHeaders: { Authorization: `Bearer ${isLoggedIn.token}` }
-      //     });
-      // }
-
-      // return next.handle(request);
-
-    // let token = this.GetToken();
-    // request = request.clone({
-    //     setHeaders: {
-    //       Authorization: `Bearer ${token}`
-    //     }
-    // });
-
-    // return next.handle(request);
   }
 
-  // private handle401Error(request: HttpRequest<any>, next: HttpHandler) {
-  //   if (!this.isRefreshing) {
-  //     this.isRefreshing = true;
-  //     // this.refreshTokenSubject.next(null);
+  refreshTokenMethod(request: HttpRequest<any>, next: HttpHandler, userLogged: UserLogged): Observable<HttpEvent<any>> {
+    let refreshTokenRequest = new RefreshTokenRequest();
 
-  //     const isLoggedIn = this.authenticationService.userValue;
+    refreshTokenRequest.tokenExpired = userLogged.token;
+    refreshTokenRequest.tokenRefresh = userLogged.tokenRefresh;
+    refreshTokenRequest.email = userLogged.email;
 
-  //     if (token)
-  //     this.authenticationService.RefreshAuthentication().subscribe(data => {
-  //       this.storageService.set('authentication', JSON.stringify(data.data.result));
-  //      }, err => {
-  //       console.error(err);
-  //      })
-  //   }
-  // }
+    return from(this.authenticationService.RefreshToken(refreshTokenRequest)).pipe(
+        switchMap((response: any) => {
 
-  // RefreshToken(){
-  //   this.authService.RefreshAuthentication().subscribe(data => {
-  //     this.storageService.set('authentication', JSON.stringify(data.data.result));
-  //    }, err => {
-  //     console.error(err);
-  //    })
-  // }
+        request = request.clone({
+          setHeaders: {
+            Authorization: 'Bearer ' + response.entity.token,
+          },
+        });
 
-  // GetToken(url:string): string {
-  //   let authentication = this.storageService.get('authentication');
-  //   if(authentication){
-  //     var date=new Date()
-  //     var dateExpired=new Date(JSON.parse(authentication).dateExpired)
-  //     var diffMins = Math.round(((dateExpired.getTime() - date.getTime() % 86400000) % 3600000) / 60000)
-  //     if (dateExpired > date && diffMins < environment.RefreshAuthentication.minuteRefresh && !url.includes("RefreshAuthentication")){
-  //       this.RefreshToken();
-  //       return JSON.parse(this.storageService.get('authentication')).token
-  //     }
-  //     return JSON.parse(this.storageService.get('authentication')).token
-  //   }
-  //   return ""
-  // }
+        return next.handle(request);
+      }),
+      catchError((error) => {
+        if (error.error.statusCode == 404) {
+          this.authenticationService.Logout();
+        }
+        return throwError(() => error);
+      })
+    );
+  }
 }
 
 

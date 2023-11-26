@@ -1,5 +1,5 @@
 export class AuthRequest {
-  mail: string;
+  email: string;
   password: string;
   provider: number;
   fullName: string;
@@ -9,19 +9,32 @@ export class AuthResponse {
   token: string;
   tokenRefresh: string;
   expiredDate: Date;
-  mail: string;
+  email: string;
 }
 
 export class SendCodeResetPassword {
-  mail: string;
+  email: string;
 }
 
 export class ValidateCodeResetPassword {
-  mail: string;
+  email: string;
   code: string;
 }
 
 export class ResetPassword {
-  userId: number;
+  email: string;
   password: string;
+}
+
+export class RefreshTokenRequest {
+  tokenExpired: string;
+  tokenRefresh: string;
+  email: string;
+}
+
+export class UserLogged {
+  email: string;
+  expiredDate: Date;
+  token: string;
+  tokenRefresh: string;
 }

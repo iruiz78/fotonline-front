@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, map } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, map } from 'rxjs';
 import { StorageService } from './storage.service';
-import { environment } from 'apps/client/src/environments/environment';
-import { AuthRequest, AuthResponse, ResetPassword, SendCodeResetPassword, ValidateCodeResetPassword } from './models/auth.model';
+import { environment } from 'environments/environment';
+import { AuthRequest, AuthResponse, RefreshTokenRequest, ResetPassword, SendCodeResetPassword, UserLogged, ValidateCodeResetPassword } from './models/auth.model';
 import { GenericResponse } from './models/communication/genericResponse';
 import { Router } from '@angular/router';
 
@@ -25,21 +25,36 @@ export class AuthenticationService {
     this.user = this.userSubject.asObservable();
   }
 
-  public get userValue() {
+  public get userValue(): UserLogged {
     return this.userSubject ? this.userSubject.value : null;
+  }
+
+  TestConnectionApi() {
+    return this.http.post<any>(`${environment.api_url}/Auth/TestConnectionApi`, {});
   }
 
   Login(authRequest: AuthRequest) {
     return this.http.post<GenericResponse<AuthResponse>>(`${environment.api_url}/Auth/Login`, authRequest)
           .pipe(map(response => {
 
-              if(response.statusCode !== 401) {
-                this.storageService.set('user', response.entity);
-                this.userSubject.next(response.entity);
-              }
+            if(response.statusCode !== 401) {
+              this.storageService.set('user', response.entity);
+              this.userSubject.next(response.entity);
+            }
 
-              return response;
-            }));
+            return response;
+          }));
+  }
+
+  RefreshToken(refreshTokenRequest: RefreshTokenRequest) {
+    return this.http.post<GenericResponse<AuthResponse>>(`${environment.api_url}/Auth/RefreshToken`, refreshTokenRequest)
+    .pipe(map(response => {
+
+      this.storageService.set('user', response.entity);
+      this.userSubject.next(response.entity);
+
+      return response;
+    }));
   }
 
   SendCodeResetPassword(sendCodeResetPassword: SendCodeResetPassword) {

@@ -42,14 +42,14 @@ export class LoginComponent {
 
   createForm() {
     this.form = this.fb.group({
-      mail: ['', Validators.required],
+      email: ['', Validators.required],
       password: ['', Validators.required],
     });
   }
 
   onSubmit() {
     let authRequest = new AuthRequest();
-    authRequest.mail = this.form.value.mail;
+    authRequest.email = this.form.value.email;
     authRequest.password = this.form.value.password;
     authRequest.provider = LoginProvider.OWN;
     authRequest.fullName = '';
@@ -60,7 +60,6 @@ export class LoginComponent {
   login(authRequest: AuthRequest) {
     this.authService.Login(authRequest).subscribe({
       next: (data) => {
-        console.log(data);
 
         if(data.statusCode == 401)
           this.messageService.add({ severity: 'warn', summary: 'Atención!', detail: 'La dirección de correo electrónico o la contraseña que has introducido no son correctas.' });
@@ -74,6 +73,9 @@ export class LoginComponent {
         // action.action = false;
 
         // this.dataService.changeMessage(action);
+      },
+      error: (err) => {
+        this.messageService.add({ severity: 'error', summary: 'Error!', detail: 'Ha ocurrido un error.' });
       }
     });
   }

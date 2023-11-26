@@ -1,0 +1,185 @@
+<p-table
+#dt
+[styleClass]="configuration.sizes.class"
+[columns]="selectedColumns"
+[value]="value"
+[scrollable]="configuration.scrollable.active"
+[scrollHeight]="configuration.scrollable.scrollHeight"
+[resizableColumns]="configuration.resizableColumns"
+[paginator]="configuration.paginator"
+[rows]="configuration.rows"
+[showCurrentPageReport]="configuration.showCurrentPageReport"
+currentPageReportTemplate="Mostrando {first} de {totalRecords}"
+[rowsPerPageOptions]="configuration.rowsPerPageOptions"
+[reorderableColumns]="configuration.reorderableColumns"
+[responsive]="configuration.responsive"
+[alwaysShowPaginator]="configuration.alwaysShowPaginator"
+stateStorage="local"
+[stateKey]="configuration.stateKey"
+[autoLayout]="true"
+exportFilename={{this.configuration.fileExportName}}
+>
+<ng-template pTemplate="caption" *ngIf="configuration.showFilters">
+  <div class="row">
+    <div class="col-12 col-sm-12 col-md-3" *ngIf="!configuration.disabledSearchKeywords">
+      <div class="flex">
+        <span class="p-input-icon-left ml-auto">
+            <i class="pi pi-search"></i>
+            <input pInputText class="w-100" type="text" [(ngModel)]="textSearch" (ngModelChange)="search(dt)" placeholder="Buscar..." />
+        </span>
+      </div>
+    </div>
+
+    <div class="col-12 col-sm-12" [ngClass]="!configuration.disabledSearchKeywords ? 'col-md-3' : 'col-md-6'">
+      <p-multiSelect
+        class="w-100"
+        [options]="columns"
+        [(ngModel)]="selectedColumns"
+        optionLabel="header"
+        [filter]="false"
+        selectedItemsLabel="{0} Elija columnas"
+        [style]="{ minWidth: '200px' }"
+        [ngStyle]="!configuration.showDropdownColumn ? {'display' : 'none'} : {'display' : 'block'}"
+        placeholder="Elija columnas">
+      </p-multiSelect>
+      <p-dropdown
+        class="w-100"
+        optionLabel="name"
+        [filter]="false"
+        [options]="dropdownOption"
+        selectedItemsLabel="{0} Elija columnas"
+        [style]="{ minWidth: '200px' }"
+        [(ngModel)]="selectedOption"
+        (onChange)="changeDropdownEvent()"
+        [ngStyle]="!configuration.showDropdownGeneric ? {'display' : 'none'} : {'display' : 'block'}"
+        placeholder="Elija una opción">
+      </p-dropdown>
+    </div>
+
+    <div class="col-12 col-sm-12 col-md-6 text-right col-2-caption">
+      <button
+        *ngIf = "value != undefined && value.length > 0 && configuration.export.xls"
+        type="button"
+        pButton pRipple icon="pi pi-file-excel"
+        (click)="exportExcel()"
+        class="p-button-success mr-2"
+        pTooltip="XLS"
+        tooltipPosition="bottom">
+      </button>
+      <button
+        *ngIf = "value != undefined && value.length > 0 && configuration.export.csv"
+        type="button"
+        pButton pRipple icon="pi pi-file"
+        (click)="dt.exportCSV()"
+        class="p-button mr-2"
+        pTooltip="CSV" tooltipPosition="bottom">
+      </button>
+      <button
+        *ngIf = "value != undefined && value.length > 0 && configuration.export.pdf"
+        type="button"
+        pButton pRipple icon="pi pi-file-pdf"
+        (click)="exportPdf()"
+        class="p-button-warning mr-2"
+        pTooltip="PDF" tooltipPosition="bottom">
+      </button>
+      <button *ngIf="configuration.events.newEvent"
+        label="Nuevo"
+        pButton pRipple icon="pi pi-plus"
+        class="p-button-success mr-2 ml-1"
+        (click)="goToNew()">
+      </button>
+      <button *ngIf="configuration.filter.clearFilter"
+        pButton
+        label="Limpiar"
+        class="p-button-outlined"
+        icon="pi pi-filter-slash"
+        (click)="clearFilter(dt)">
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template pTemplate="emptymessage" let-columns>
+  <tr>
+    <td [attr.colspan]="(columns.length)+1" style="text-align: center;font-weight: 500;"> No se encontraron registros </td>
+  </tr>
+</ng-template>
+
+<ng-template pTemplate="header" let-columns>
+  <tr>
+    <th
+      *ngFor="let col of columns"
+      pSortableColumn="{{ col.field }}"
+      pResizableColumn
+      pReorderableColumn
+      [style.width]="col.width"
+      [ngStyle]="{ 'text-align': col.alignment != undefined ? col.alignment : 'left' }">
+      {{ col.header }}
+      <p-sortIcon field="{{ col.field }}"></p-sortIcon>
+      <p-columnFilter
+        class="float-right"
+        type="text"
+        field="{{ col.field }}"
+        display="menu"
+        *ngIf="configuration.filter.enabled">
+      </p-columnFilter>
+    </th>
+    <th></th>
+  </tr>
+</ng-template>
+<ng-template pTemplate="body" let-rowData let-columns="columns">
+  <tr>
+    <td *ngFor="let col of columns" [style.width]="col.width" [ngStyle]="{ 'text-align': col.alignment != undefined ? col.alignment : 'left' }">
+      {{ col.slice && rowData[col.field] ? (rowData[col.field] | slice:0:col.sliceLength) + (rowData[col.field].length > col.sliceLength ? '...' : '')
+        : (col.data && rowData[col.field] !== '0001-01-01T00:00:00') ? (rowData[col.field] | date : col.format)
+        : col.currency ? (rowData[col.field] | currency : col.format)
+        : mapData(rowData, col) }}
+    </td>
+    <td *ngIf="configuration.events.enabled" class="text-right">
+      <p-checkbox
+        *ngIf="configuration.events.otherEvent2"
+        [(ngModel)]="rowData['active']"
+        [disabled]="configuration.checkDisabled"
+        [binary]="true"
+        class="checkbox-xl" inputId="binary">
+      </p-checkbox>
+      <button
+        *ngIf="configuration.events.editEvent"
+        pButton
+        pRipple
+        icon="pi pi-pencil"
+        class="p-button-rounded p-button-success"
+        (click)="goToEdit(rowData)">
+      </button>
+      <button
+        *ngIf="configuration.events.deleteEvent"
+        pButton
+        pRipple
+        icon="pi pi-trash"
+        class="p-button-rounded custom-color-button ml-2"
+        (click)="remove(rowData)">
+      </button>
+      <button
+        *ngIf="configuration.events.otherEvent"
+        pButton
+        pRipple
+        label="{{ configuration.style.label }}"
+        icon="{{ configuration.events.otherEventIcon }}"
+        class=" {{ configuration.style.class }}"
+        (click)="goToOther(rowData)">
+      </button>
+      <button
+      *ngIf="configuration.events.printEvent"
+      pButton
+      pRipple
+      icon="pi pi-print"
+      class="p-button-rounded p-button-secondary ml-2"
+      (click)="goToPrint(rowData)">
+    </button>
+      <p-checkbox *ngIf="configuration.events.checkBoxEvent" (onChange)="goToCheckBox(rowData)" [(ngModel)]="rowData.isChecked" [binary]="true" inputId="binary"></p-checkbox>
+    </td>
+  </tr>
+</ng-template>
+</p-table>
+
+<p-confirmDialog *ngIf="configuration.confirmDialog.enabled" header="{{configuration.confirmDialog.header}}" [closeOnEscape]="true" icon="pi pi-exclamation-triangle"></p-confirmDialog>
